@@ -1,7 +1,8 @@
 /*------------------------------------------------------------------------------
- JSON request via curl:
- > curl -H "Content-Type: application/json" -X POST -d '{state: true}' http://IP/led
-------------------------------------------------------------------------------*/
+  JSON request via curl:
+  > curl -H "Content-Type: application/json" -X POST -d '{state: true}' http://IP/led
+  > curl -H "Content-Type: application/json" -X GET http://IP/info
+  ------------------------------------------------------------------------------*/
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
@@ -13,9 +14,9 @@ char* password = "*****";
 
 void setup()
 {
-  WiFi.begin(ssid,password);
+  WiFi.begin(ssid, password);
   Serial.begin(115200);
-  while(WiFi.status()!=WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED)
   {
     Serial.print(".");
     delay(500);
@@ -24,7 +25,8 @@ void setup()
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
 
-  server.on("/led",setLed);
+  server.on("/led", setLed);
+  server.on("/info", getInfo);
   server.begin();
 }
 
@@ -33,12 +35,23 @@ void loop()
   server.handleClient();
 }
 
+void getInfo() {
+  String json = "{";
+  json += "led: true";
+  json += "}";
+  server.send(200, "text/json", json);
+}
+
 void setLed()
 {
   String data = server.arg("plain");
   StaticJsonBuffer<200> jBuffer;
   JsonObject& jObject = jBuffer.parseObject(data);
-  String state = jObject["state"];
+  boolean state = jObject["state"];
   Serial.println(state);
-  server.send(204,"");
+  String json = "{";
+  json += "\"led\":" + String(state);
+  json += "}";
+
+  server.send(200, "text/json", json);
 }
