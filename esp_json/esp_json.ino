@@ -9,8 +9,8 @@
 
 ESP8266WebServer server;
 uint8_t pin_led = 16;
-char* ssid = "*****";
-char* password = "*****";
+char* ssid = "Xiaomi_E916";
+char* password = "sveta.sasha";
 
 void setup()
 {
@@ -27,6 +27,7 @@ void setup()
 
   server.on("/led", setLed);
   server.on("/info", getInfo);
+  server.on("/mode", nextMode);
   server.begin();
 }
 
@@ -53,5 +54,15 @@ void setLed()
   json += "\"led\":" + String(state);
   json += "}";
 
+  server.send(200, "text/json", json);
+}
+
+void nextMode() {
+  Serial.println("Start pressing");
+  delay(500);
+  Serial.println("Stop pressing");
+  String json = "{";
+  json += "success: true";
+  json += "}";
   server.send(200, "text/json", json);
 }
