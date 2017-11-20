@@ -9,8 +9,8 @@
 
 ESP8266WebServer server;
 uint8_t pin_led = 16;
-char* ssid = "Xiaomi_E916";
-char* password = "sveta.sasha";
+char* ssid = "*****";
+char* password = "******";
 
 void setup()
 {
